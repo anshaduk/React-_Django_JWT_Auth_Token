@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.decorators import api_view,permissions_classes
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -24,7 +24,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 @api_view(['GET'])
-@permissions_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def getRoutes(request):
     routes = [
         '/api/token',
@@ -33,8 +33,10 @@ def getRoutes(request):
     return Response(routes)
 
 @api_view(['GET'])
-@permissions_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def getNotes(request):
-    notes = Note.objects.all()
+    user = request.user
+    print(user)
+    notes = user.note_set.all()
     serializer = NoteSerializer(notes,many=True)
     return Response(serializer.data)
